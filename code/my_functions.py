@@ -38,7 +38,7 @@ def numeric_houses(df):
     df['garage_cars']=np.where(df['garage_cars'].isna(),0,df['garage_cars'].astype(float)) 
     return df.copy()
 def dummy_houses(df): #not used anymore
-    houses_dummy_1= pd.get_dummies(data=df,columns=['mas_vnr_type','bsmt_exposure','garage_type','alley','misc_feature','land_contour'], drop_first=True,dummy_na=True)
+    houses_dummy_1= pd.get_dummies(data=df,columns=['mas_vnr_type','bsmt_exposure','garage_type','alley','misc_feature','land_contour','lot_shape'], drop_first=True,dummy_na=True)
     # this group of columns has nan values that I am not comfortable calling 0
 
     houses_dummy_2= pd.get_dummies(data=houses_dummy_1,columns=['ms_subclass','ms_zoning','street','neighborhood','condition_2','bldg_type',
@@ -51,30 +51,30 @@ def dummy_houses(df): #not used anymore
 
 def multiplier_attempt3(houses3):
     # lot_area stays but now make lot_area_value which depends on: lot_shape 
-    houses3['lot_area_frontage']=houses3['remainder__lot_area']*houses3['remainder__lot_frontage']
+    houses3['lot_area_frontage']=houses3['lot_area']*houses3['lot_frontage']
 
 
     # garages: Area: 'garage_finish',garage_qual,garage_cond, 
-    houses3['garage_area_qual']=houses3['remainder__garage_area']*houses3['remainder__garage_qual']
-    houses3['garage_area_cond']=houses3['remainder__garage_area']*houses3['remainder__garage_cond']
-    houses3['garage_area_finish']=houses3['remainder__garage_area']*houses3['remainder__garage_finish']
+    houses3['garage_area_qual']=houses3['garage_area']*houses3['garage_qual']
+    houses3['garage_area_cond']=houses3['garage_area']*houses3['garage_cond']
+    houses3['garage_area_finish']=houses3['garage_area']*houses3['garage_finish']
 
     # fireplaces: fireplace_qu
     
     # bsmtfin_sf_1 : bsmtfin_type_1, 
-    houses3['bsmt_sf_qual_type_1']=houses3['remainder__bsmtfin_sf_1']*houses3['remainder__bsmtfin_type_1']
+    houses3['bsmt_sf_qual_type_1']=houses3['bsmtfin_sf_1']*houses3['bsmtfin_type_1']
     # bsmtfin_sf_2: bsmtfin_type_2, 
-    houses3['bsmt_total_sf_cond']=houses3['remainder__total_bsmt_sf']*houses3['remainder__bsmt_cond']
+    houses3['bsmt_total_sf_cond']=houses3['total_bsmt_sf']*houses3['bsmt_cond']
     #total_bsmt_sf: bsmt_qual, bsmt_cond 
-    houses3['bsmt_total_sf_qual']=houses3['remainder__total_bsmt_sf']*houses3['remainder__bsmt_qual']   
+    houses3['bsmt_total_sf_qual']=houses3['total_bsmt_sf']*houses3['bsmt_qual']   
     
-    #houses3['misc_feature_Gar2_val']=houses3['oh__misc_feature_Gar2']*houses3['remainder__misc_val']
+    #houses3['misc_feature_Gar2_val']=houses3['misc_feature_Gar2']*houses3['misc_val']
     
-    houses3['misc_feature_Othr_val']=houses3['oh__misc_feature_Othr']*houses3['remainder__misc_val']
-    houses3['misc_feature_Shed_val']=houses3['oh__misc_feature_Shed']*houses3['remainder__misc_val']
+    houses3['misc_feature_Othr_val']=houses3['misc_feature_Othr']*houses3['misc_val']
+    houses3['misc_feature_Shed_val']=houses3['misc_feature_Shed']*houses3['misc_val']
     
-    houses3['misc_feature_TenC_val']=houses3['oh__misc_feature_TenC']*houses3['remainder__misc_val']
+    #houses3['misc_feature_TenC_val']=houses3['misc_feature_TenC']*houses3['misc_val']
     
     # testing out different variations of dropping codependent columns
-    houses3.drop(columns=['remainder__garage_qual','remainder__garage_cond','remainder__garage_finish','oh__garage_type_Attchd','oh__garage_type_Basment','oh__garage_type_BuiltIn','oh__garage_type_CarPort','oh__garage_type_Detchd','remainder__fireplace_qu','remainder__exter_cond','remainder__bsmt_qual','remainder__bsmt_cond','remainder__pool_qc','remainder__pool_area'])
+    houses3.drop(columns=['pid','garage_qual','garage_cond','garage_finish','garage_type_Attchd','garage_type_Basment','garage_type_BuiltIn','garage_type_CarPort','garage_type_Detchd','fireplace_qu','exter_cond','bsmt_qual','bsmt_cond','pool_qc','pool_area'])
     return houses3.copy()
