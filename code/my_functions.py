@@ -4,11 +4,16 @@ def map_home(df): #Note - Dictionary for maps are contraversial in my mind. Subj
     df.columns =df.columns.str.lower().str.replace(' ','_')# makes things easier for me
     # fence column was split into two ad the original was dropped 
     df = df.drop(columns=['id']) # id is arbitrary, lot shape was hard to deal with last time and I will leave it out this time too
+    # fences had data on the quality of the fence and the type of fence. I will split these into two columns
     df['fence_private']= df['fence'].map({'GdPrv':2,'MnPrv':1,'GdWo':0,'MnWw':0,np.nan:0})
     df['fence_wood'] = df['fence'].map({'GdPrv':0,'MnPrv':0,'GdWo':2,'MnWw':1,np.nan:0})
     df.drop(columns=['fence'], inplace=True)
     # this function is based off of wild assumptions by me. The value of the ordinal variables here relative to eachother is an educated guess
-    qual_map = {'Po':1,'Fa':2,'TA':3,'Ex':5,'Gd':4,np.nan:0}
+    # I will be mapping the ordinal variables to number. The question is this: 
+    # What is the most affective way to map these qualities to numbers so they reflect the reality of property. Property value increases for many reasons but one main consideration us that poor quality property is a financial burden.
+    # my original qual_map = {'Po':1,'Fa':2,'TA':3,'Ex':4,'Gd':5,np.nan:0}
+    qual_map = {'Po':.25,'Fa':.5,'TA':1,'Ex':1.5,'Gd':2,np.nan:0} # trying this out now
+    
     df['garage_finish']= df['garage_finish'].map({'Unf':1,'RFn':2,'Fin':3,np.nan:0})
     df['garage_qual']= df['garage_qual'].map(qual_map)
     df['garage_cond']= df['garage_cond'].map(qual_map)
@@ -40,7 +45,6 @@ def numeric_houses(df):
 def dummy_houses(df): #not used anymore
     houses_dummy_1= pd.get_dummies(data=df,columns=['mas_vnr_type','bsmt_exposure','garage_type','alley','misc_feature','land_contour','lot_shape'], drop_first=True,dummy_na=True)
     # this group of columns has nan values that I am not comfortable calling 0
-
     houses_dummy_2= pd.get_dummies(data=houses_dummy_1,columns=['ms_subclass','ms_zoning','street','neighborhood','condition_2','bldg_type',
                                                             'house_style','roof_style','roof_matl','exterior_1st','exterior_2nd','foundation',
                                                            'central_air','electrical','sale_type','condition_1','utilities','lot_config','land_slope',
@@ -48,33 +52,85 @@ def dummy_houses(df): #not used anymore
     return houses_dummy_2.copy()
 
 
-
-def multiplier_attempt3(houses3):
+def quality_multiplication(df):
     # lot_area stays but now make lot_area_value which depends on: lot_shape 
-    houses3['lot_area_frontage']=houses3['lot_area']*houses3['lot_frontage']
+    df['lot_area_frontage']=df['lot_area']*df['lot_frontage']
 
+    # I want to find all the the specific dummy variable columns that can be correlated with some measure of quality or condition
+    # I will then use these columns to create a new feature that is the multiplication of the dummy variable and the quality or condition
+    # this will give me a new feature that is a measure of the quality or condition of the house feature
+    # I will then use this new feature to see if it improves the model
+    # exterior multiplier
+    desired_columns_ext = [col for col in list(df.columns) if 'exterior_1st' in col or 'exterior_2nd' in col or 'foundation' in col] # 'exterqual', 'extercond' for the first 4. 'roofstyle' times 'roofmatl' to be comprehensive 
+    for col in desired_columns_ext:
+        df[col+'_qual']=df[col]*df['exter_qual']
+        df[col+'_cond']=df[col]*df['exter_cond']
+        df.drop(columns=[col],inplace=True)
+    roof_mats = [col for col in list(df.columns) if 'roof_matl' in col] 
+    roof_styles = [col for col in list(df.columns) if 'roof_style' in col]
+    for mat in roof_mats: 
+        df[mat+'qual']=df[mat]*df['exter_qual']
+        df[mat+'cond']=df[mat]*df['exter_cond']
 
-    # garages: Area: 'garage_finish',garage_qual,garage_cond, 
-    houses3['garage_area_qual']=houses3['garage_area']*houses3['garage_qual']
-    houses3['garage_area_cond']=houses3['garage_area']*houses3['garage_cond']
-    houses3['garage_area_finish']=houses3['garage_area']*houses3['garage_finish']
+    for style in roof_styles: 
+        df[style+'qual']=df[style]*df['exter_qual']
+        df[style+'cond']=df[style]*df['exter_cond']
+    # desired_columns_heating = [col for col in list(df.columns) if 'heating' in col and col!='heatingqc'] # 'heatingqc'
+    # if 'heatingqc' in desired_columns_heating:
+    #     desired_columns_heating
+    # for col in desired_columns_heating:
+    #     df[col+'_qual']=df[col]*df['heatingqc']
+    #     df.drop(columns=[col],inplace=True)
+    desired_columns_garage = [col for col in list(df.columns) if 'garage_type' in col] # 'garagequal', 'garagecond', 'garagearea' like below
+    for col in desired_columns_garage:
+        df[col+'_area'+'_qual']=df[col]*df['garage_area']*df['garage_qual']
+        df[col+'_area'+'_cond']=df[col]*df['garage_area']*df['garage_cond']
+        df.drop(columns=[col],inplace=True)
+    desired_columns_misc = [col for col in list(df.columns) if 'misc_feature' in col] # 'miscval'
+    for col in desired_columns_misc:
+        df[col+'_val']=df[col]*df['misc_val']
+        df.drop(columns=[col],inplace=True)
+    # finishing up garage detail
+    # df['garage_finish_qual']=df['garage_finish']*df['garage_qual']
+    # df.drop(columns=['garage_finish'],inplace=True)
+    # df['garage_finish_cond']=df['garage_finish']*df['garage_cond']
+    # df.drop(columns=['garage_cond'],inplace=True)
+    # df.drop(columns=['garage_qual'],inplace=True)
 
     # fireplaces: fireplace_qu
-    
-    # bsmtfin_sf_1 : bsmtfin_type_1, 
-    houses3['bsmt_sf_qual_type_1']=houses3['bsmtfin_sf_1']*houses3['bsmtfin_type_1']
-    # bsmtfin_sf_2: bsmtfin_type_2, 
-    houses3['bsmt_total_sf_cond']=houses3['total_bsmt_sf']*houses3['bsmt_cond']
-    #total_bsmt_sf: bsmt_qual, bsmt_cond 
-    houses3['bsmt_total_sf_qual']=houses3['total_bsmt_sf']*houses3['bsmt_qual']   
-    
-    #houses3['misc_feature_Gar2_val']=houses3['misc_feature_Gar2']*houses3['misc_val']
-    
-    houses3['misc_feature_Othr_val']=houses3['misc_feature_Othr']*houses3['misc_val']
-    houses3['misc_feature_Shed_val']=houses3['misc_feature_Shed']*houses3['misc_val']
-    
-    #houses3['misc_feature_TenC_val']=houses3['misc_feature_TenC']*houses3['misc_val']
-    
-    # testing out different variations of dropping codependent columns
-    houses3.drop(columns=['pid','garage_qual','garage_cond','garage_finish','garage_type_Attchd','garage_type_Basment','garage_type_BuiltIn','garage_type_CarPort','garage_type_Detchd','fireplace_qu','exter_cond','bsmt_qual','bsmt_cond','pool_qc','pool_area'])
-    return houses3.copy()
+    if 'fireplace_qu' in list(df.columns):
+        df['fireplace_qu_val']=df['fireplace_qu']*df['fireplaces']
+    else:
+        df['fireplace_qu_val']=0
+    df.drop(columns=['fireplace_qu'],inplace=True)
+
+    # pool - pool quality, pool area
+    if 'pool_qc' in list(df.columns):
+        df['pool_qc_area']=df['pool_qc']*df['pool_area']
+    else:
+        df['pool_qc_area']=0
+    df.drop(columns=['pool_qc'],inplace=True)
+    df.drop(columns=['pool_area'],inplace=True)
+
+    # basement - bsmt_qual, bsmt_cond, bsmtfin_sf_1, bsmtfin_sf_2, bsmt_unf_sf, total_bsmt_sf
+    df['bsmt_qual_area'] = df['bsmt_qual']*df['total_bsmt_sf']
+    df['bsmt_cond_area'] = df['bsmt_cond']*df['total_bsmt_sf']
+    df.drop(columns=['bsmt_qual','bsmt_cond'],inplace=True)
+
+
+    return df.copy()
+
+# This is happening because of the function
+def test_col_matcher(X_train,X_test):
+    train_cols = list(X_train.columns)
+    test_cols = list(X_test.columns)
+    # I will be adding columns to the test set that are not in the training set and setting them to 0
+    for col in train_cols:
+        if col not in test_cols:
+            X_test[col]=0
+    # I will not be using information on ameneities that are not in the test set
+    for col in test_cols:
+        if col not in train_cols:
+            X_test.drop(columns=[col],inplace=True)
+    X_test = X_test[X_train.columns]
+    return X_test.copy()
