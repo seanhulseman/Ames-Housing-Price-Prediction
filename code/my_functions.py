@@ -66,28 +66,16 @@ def quality_multiplication(df):
         df[col+'_qual']=df[col]*df['exter_qual']
         df[col+'_cond']=df[col]*df['exter_cond']
         df.drop(columns=[col],inplace=True)
-    # roof_mats = [col for col in list(df.columns) if 'roof_matl' in col] 
-    # roof_styles = [col for col in list(df.columns) if 'roof_style' in col]
-    # for mat in roof_mats: 
-    #     df[mat+'qual']=df[mat]*df['exter_qual']
-    #     df[mat+'cond']=df[mat]*df['exter_cond']
-    #     df.drop(columns=[mat],inplace=True)
-
-    # for style in roof_styles: 
-    #     df[style+'qual']=df[style]*df['exter_qual']
-    #     df[style+'cond']=df[style]*df['exter_cond']
-    #     df.drop(columns=[style],inplace=True)
-    desired_columns_roof = [col for col in list(df.columns) if 'roof_matl' in col or 'roof_style' in col] 
+    desired_columns_roof = [col for col in list(df.columns) if 'roof_matl' in col] 
     for col in desired_columns_roof:
         df[col+'_qual']=df[col]*df['overall_qual']
-        #df[col+'_cond']=df[col]*df['overall_cond']
+        df[col+'_cond']=df[col]*df['overall_cond']
         df.drop(columns=[col],inplace=True)
-    # desired_columns_heating = [col for col in list(df.columns) if 'heating' in col and col!='heatingqc'] # 'heatingqc'
-    # if 'heatingqc' in desired_columns_heating:
-    #     desired_columns_heating
-    # for col in desired_columns_heating:
-    #     df[col+'_qual']=df[col]*df['heatingqc']
-    #     df.drop(columns=[col],inplace=True)
+    desired_columns_heating = [col for col in list(df.columns) if 'heating' in col and col!='heating_qc'] # 'heatingqc'
+    for col in desired_columns_heating:
+        df[col+'_qual']=df[col]*df['heating_qc']
+        df[col+'_cond']=df[col]*df['overall_qual']
+        df.drop(columns=[col],inplace=True)
     desired_columns_garage = [col for col in list(df.columns) if 'garage_type' in col] # 'garagequal', 'garagecond', 'garagearea' like below
     for col in desired_columns_garage:
         df[col+'_area'+'_qual']=df[col]*df['garage_area']*df['garage_qual']
