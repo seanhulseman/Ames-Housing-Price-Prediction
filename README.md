@@ -30,6 +30,12 @@ The dataset used in this project over 81 columns describing 2051 sales of reside
 | SaleType        | Type of sale                                              |
 | SaleCondition   | Condition of sale                                         |
 
+**Target Variable**:
+- Sale Price: The target variable to be predicted.
+
+## Feature Engineering
+
+The problem with using this data for predicting sale price is that each column affects the sale price differently. Some remark on the presence of a feature and some describe the quality of that specific feature. I attempted to resolve it by using my map_home() function to map the 'quality' columns to make them ordinal, which are then used to add a quality multiplier to the various types of amenities described in the data. An example of why I did this: A garage should increase your house's value if it is in good condition, if it is in disrepair it is a burden and its presence should decrease the sale price. I used my discretion when creating the maps as there were several different patterns for describing quality
 ## New Columns Created by `quality_multiplication` Function
 #### Abridged slightly - for garages I made columns the same way for condition as I did with quality
 | New Column Name | Columns Used | Description |
@@ -56,12 +62,7 @@ The dataset used in this project over 81 columns describing 2051 sales of reside
 
 
 
-**Target Variable**:
-- Sale Price: The target variable to be predicted.
 
-## Feature Engineering
-
-The problem with using this data for predicting sale price is that each column affects the sale price differently. Some remark on the presence of a feature and some describe the quality of that specific feature. I attempted to resolve it by using my map_home() function to map the 'quality' columns to make them ordinal, which are then used to add a quality multiplier to the various types of amenities described in the data. An example of why I did this: A garage should increase your house's value if it is in good condition, if it is in disrepair it is a burden and its presence should decrease the sale price. I used my discretion when creating the maps as there were several different patterns for describing quality
 
 ## Regression Techniques Explored
 
