@@ -77,6 +77,11 @@ def quality_multiplication(df):
     #     df[style+'qual']=df[style]*df['exter_qual']
     #     df[style+'cond']=df[style]*df['exter_cond']
     #     df.drop(columns=[style],inplace=True)
+    desired_columns_roof = [col for col in list(df.columns) if 'roof_matl' in col or 'roof_style' in col] 
+    for col in desired_columns_roof:
+        df[col+'_qual']=df[col]*df['overall_qual']
+        #df[col+'_cond']=df[col]*df['overall_cond']
+        df.drop(columns=[col],inplace=True)
     # desired_columns_heating = [col for col in list(df.columns) if 'heating' in col and col!='heatingqc'] # 'heatingqc'
     # if 'heatingqc' in desired_columns_heating:
     #     desired_columns_heating
@@ -87,12 +92,25 @@ def quality_multiplication(df):
     for col in desired_columns_garage:
         df[col+'_area'+'_qual']=df[col]*df['garage_area']*df['garage_qual']
         df[col+'_area'+'_cond']=df[col]*df['garage_area']*df['garage_cond']
-        df.drop(columns=[col],inplace=True)
+        #df.drop(columns=[col],inplace=True)
     desired_columns_misc = [col for col in list(df.columns) if 'misc_feature' in col] # 'miscval'
     for col in desired_columns_misc:
         df[col+'_val']=df[col]*df['misc_val']
+        #df.drop(columns=[col],inplace=True)
+    # quantify the neighborhood effect on certain types of housing
+    desired_columns_neighborhood = [col for col in list(df.columns) if 'neighborhood' in col] # 'neighborhood'
+    desired_columns_subclass = [col for col in list(df.columns) if 'ms_subclass' in col] 
+    for col in desired_columns_subclass:
+        df[col+'_qual']=df[col]*df['overall_qual']
+        #df[col+'_cond']=df[col]*df['overall_cond']
         df.drop(columns=[col],inplace=True)
-
+    for col in desired_columns_neighborhood:
+        # I want to multiply the neighborhood by overall quality
+        df[col+'_qual']=df[col]*df['overall_qual']
+        df[col+'_cond']=df[col]*df['overall_cond']
+        #df.drop(columns=[col],inplace=True)
+     # i want columns for each ms_subclass 
+    
 
     # fireplaces: fireplace_qu
     if 'fireplace_qu' in list(df.columns):
