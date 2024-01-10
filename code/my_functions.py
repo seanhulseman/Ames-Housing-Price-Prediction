@@ -54,7 +54,7 @@ def dummy_houses(df): #not used anymore
 
 def quality_multiplication(df):
     # lot_area stays but now make lot_area_value which depends on: lot_shape 
-    df['lot_area_frontage']=df['lot_area']*df['lot_frontage']
+    # df['lot_area_frontage']=df['lot_area']*df['lot_frontage']
 
     # I want to find all the the specific dummy variable columns that can be correlated with some measure of quality or condition
     # I will then use these columns to create a new feature that is the multiplication of the dummy variable and the quality or condition
@@ -66,17 +66,17 @@ def quality_multiplication(df):
         df[col+'_qual']=df[col]*df['exter_qual']
         df[col+'_cond']=df[col]*df['exter_cond']
         df.drop(columns=[col],inplace=True)
-    roof_mats = [col for col in list(df.columns) if 'roof_matl' in col] 
-    roof_styles = [col for col in list(df.columns) if 'roof_style' in col]
-    for mat in roof_mats: 
-        df[mat+'qual']=df[mat]*df['exter_qual']
-        df[mat+'cond']=df[mat]*df['exter_cond']
-        df.drop(columns=[mat],inplace=True)
+    # roof_mats = [col for col in list(df.columns) if 'roof_matl' in col] 
+    # roof_styles = [col for col in list(df.columns) if 'roof_style' in col]
+    # for mat in roof_mats: 
+    #     df[mat+'qual']=df[mat]*df['exter_qual']
+    #     df[mat+'cond']=df[mat]*df['exter_cond']
+    #     df.drop(columns=[mat],inplace=True)
 
-    for style in roof_styles: 
-        df[style+'qual']=df[style]*df['exter_qual']
-        df[style+'cond']=df[style]*df['exter_cond']
-        df.drop(columns=[style],inplace=True)
+    # for style in roof_styles: 
+    #     df[style+'qual']=df[style]*df['exter_qual']
+    #     df[style+'cond']=df[style]*df['exter_cond']
+    #     df.drop(columns=[style],inplace=True)
     # desired_columns_heating = [col for col in list(df.columns) if 'heating' in col and col!='heatingqc'] # 'heatingqc'
     # if 'heatingqc' in desired_columns_heating:
     #     desired_columns_heating
