@@ -3,7 +3,7 @@ import numpy as np
 def map_home(df): #Note - Dictionary for maps are contraversial in my mind. Subject to change values
     df.columns =df.columns.str.lower().str.replace(' ','_')# makes things easier for me
     # fence column was split into two ad the original was dropped 
-    df = df.drop(columns=['id']) # id is arbitrary, lot shape was hard to deal with last time and I will leave it out this time too
+    df = df.drop(columns=['id','pid']) # id is arbitrary, lot shape was hard to deal with last time and I will leave it out this time too
     # fences had data on the quality of the fence and the type of fence. I will split these into two columns
     df['fence_private']= df['fence'].map({'GdPrv':2,'MnPrv':1,'GdWo':0,'MnWw':0,np.nan:0})
     df['fence_wood'] = df['fence'].map({'GdPrv':0,'MnPrv':0,'GdWo':2,'MnWw':1,np.nan:0})
@@ -71,10 +71,12 @@ def quality_multiplication(df):
     for mat in roof_mats: 
         df[mat+'qual']=df[mat]*df['exter_qual']
         df[mat+'cond']=df[mat]*df['exter_cond']
+        df.drop(columns=[mat],inplace=True)
 
     for style in roof_styles: 
         df[style+'qual']=df[style]*df['exter_qual']
         df[style+'cond']=df[style]*df['exter_cond']
+        df.drop(columns=[style],inplace=True)
     # desired_columns_heating = [col for col in list(df.columns) if 'heating' in col and col!='heatingqc'] # 'heatingqc'
     # if 'heatingqc' in desired_columns_heating:
     #     desired_columns_heating
@@ -90,12 +92,7 @@ def quality_multiplication(df):
     for col in desired_columns_misc:
         df[col+'_val']=df[col]*df['misc_val']
         df.drop(columns=[col],inplace=True)
-    # finishing up garage detail
-    # df['garage_finish_qual']=df['garage_finish']*df['garage_qual']
-    # df.drop(columns=['garage_finish'],inplace=True)
-    # df['garage_finish_cond']=df['garage_finish']*df['garage_cond']
-    # df.drop(columns=['garage_cond'],inplace=True)
-    # df.drop(columns=['garage_qual'],inplace=True)
+
 
     # fireplaces: fireplace_qu
     if 'fireplace_qu' in list(df.columns):
@@ -112,12 +109,8 @@ def quality_multiplication(df):
     df.drop(columns=['pool_qc'],inplace=True)
     df.drop(columns=['pool_area'],inplace=True)
 
-    # basement - bsmt_qual, bsmt_cond, bsmtfin_sf_1, bsmtfin_sf_2, bsmt_unf_sf, total_bsmt_sf
-    df['bsmt_qual_area'] = df['bsmt_qual']*df['total_bsmt_sf']
-    df['bsmt_cond_area'] = df['bsmt_cond']*df['total_bsmt_sf']
-    df.drop(columns=['bsmt_qual','bsmt_cond'],inplace=True)
-
-
+ 
+ 
     return df.copy()
 
 # This is happening because of the function
