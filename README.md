@@ -3,7 +3,7 @@
 
 ## Overview
 
-This project is based on [a well known kaggle competition](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques) and focuses on predicting housing sale prices in Ames, Iowa using various regression techniques (XGBRegressor, GradientBoostingRegressor, RandomForestRegressor, AdaBoostRegressor, and ExtraTreesRegressor). With a RMSLE of.1266 on unseen data the [Extreme Gradient Boosting Regressor](https://github.com/dmlc/xgboost/tree/master) was the best model I made.
+This project is based on [a well known kaggle competition](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques) and focuses on predicting housing sale prices in Ames, Iowa using various regression techniques (XGBRegressor, GradientBoostingRegressor, RandomForestRegressor, and VotingRegressor). With a RMSLE of 0.1217 on unseen data the [Extreme Gradient Boosting Regressor](https://github.com/dmlc/xgboost/tree/master) was the best model on this training data. I also made a less overfit voting regressor combining each model in the hopes of creating a less over fit model that performs just as well on unseen data
 
 
 ## Dataset
@@ -67,20 +67,18 @@ The problem with using this data for predicting sale price is that each column a
 ## Regression Techniques Explored
 
 Various regression techniques have been implemented and analyzed to predict housing sale prices. The regression models explored in this project include:
-1. **Linear Regression**
-2. **Random Forest Regressor**
-3. **Gradient Boosting Regressor**
-4. **AdaBoost Regressor**
-5. **Extra Trees Regressor**
-6. **XGB Regressor**
+1. **Random Forest Regressor**
+2. **Gradient Boosting Regressor**
+3. **XGB Regressor**
+4. **Voting Regressor**
 
 
 ## Project Structure
 
 The project is organized as follows:
 
-- `datasets/`: Contains the dataset files.
+- `datasets/`: Contains the dataset files and the predections generated to submit to kaggle competition
 - `code/`: Jupyter Notebook for this project and python file to automate preparation of this type of data for modeling
-- 
+
 - `images/`: images created in jupyter notebook
 

@@ -99,7 +99,9 @@ def quality_multiplication(df):
         df[col+'_qual']=df[col]*df['overall_qual']
         df[col+'_cond']=df[col]*df['overall_cond']
         #df.drop(columns=[col],inplace=True)
-     # i want columns for each ms_subclass 
+     # year sold should be a decimal combination of the year and month. 
+    df['year_sold']=df['yr_sold']+df['mo_sold']/12
+    df.drop(columns=['yr_sold'],inplace=True)
     
 
     # fireplaces: fireplace_qu
