@@ -1,18 +1,20 @@
 import pandas as pd
 import numpy as np
-def map_home(df): #Note - Dictionary for maps are contraversial in my mind. Subject to change values
-    df.columns =df.columns.str.lower().str.replace(' ','_')# makes things easier for me
-    # fence column was split into two ad the original was dropped 
-    df = df.drop(columns=['id','pid']) # id is arbitrary, lot shape was hard to deal with last time and I will leave it out this time too
-    # fences had data on the quality of the fence and the type of fence. I will split these into two columns
+def map_home(df): 
+    # column preprocessing
+    df.columns =df.columns.str.lower().str.replace(' ','_')
+    df = df.drop(columns=['id','pid']) 
+    # fence column has 2 scales of quality. I will make 2 columns for each fence type. One for wood and one for privacy
     df['fence_private']= df['fence'].map({'GdPrv':2,'MnPrv':1,'GdWo':0,'MnWw':0,np.nan:0})
     df['fence_wood'] = df['fence'].map({'GdPrv':0,'MnPrv':0,'GdWo':2,'MnWw':1,np.nan:0})
     df.drop(columns=['fence'], inplace=True)
-    # this function is based off of wild assumptions by me. The value of the ordinal variables here relative to eachother is an educated guess
-    # I will be mapping the ordinal variables to number. The question is this: 
+    # this function is based off of assumptions by me that are based on hunches and may be useful to vary. The value of the ordinal variables here relative to eachother is an educated guess
+    # I will be mapping the ordinal variables to a scale. The question is this: 
     # What is the most affective way to map these qualities to numbers so they reflect the reality of property. Property value increases for many reasons but one main consideration us that poor quality property is a financial burden.
     # my original qual_map = {'Po':1,'Fa':2,'TA':3,'Ex':4,'Gd':5,np.nan:0}
-    qual_map = {'Po':.25,'Fa':.5,'TA':1,'Ex':1.5,'Gd':2,np.nan:0} # trying this out now
+    #{'Po':.25,'Fa':.5,'TA':1,'Ex':4,'Gd':2,np.nan:0} # would this be better?
+    # {'Po':.25,'Fa':.5,'TA':1,'Ex':2,'Gd':1.5,np.nan:0} # trying this out now
+    qual_map = {'Po':.25,'Fa':.5,'TA':1,'Ex':4,'Gd':2,np.nan:0} # trying this out now
     
     df['garage_finish']= df['garage_finish'].map({'Unf':1,'RFn':2,'Fin':3,np.nan:0})
     df['garage_qual']= df['garage_qual'].map(qual_map)
@@ -80,7 +82,7 @@ def quality_multiplication(df):
     for col in desired_columns_garage:
         df[col+'_area'+'_qual']=df[col]*df['garage_area']*df['garage_qual']
         df[col+'_area'+'_cond']=df[col]*df['garage_area']*df['garage_cond']
-        #df.drop(columns=[col],inplace=True)
+        df.drop(columns=[col],inplace=True)
     desired_columns_misc = [col for col in list(df.columns) if 'misc_feature' in col] # 'miscval'
     for col in desired_columns_misc:
         df[col+'_val']=df[col]*df['misc_val']
