@@ -3,7 +3,7 @@
 
 ## Overview
 
-This project is based on [a well known kaggle competition](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques) and focuses on predicting housing sale prices in Ames, Iowa using various regression techniques (XGBRegressor, GradientBoostingRegressor, RandomForestRegressor, and VotingRegressor). With a RMSLE of 0.1217 on unseen data the [Extreme Gradient Boosting Regressor](https://github.com/dmlc/xgboost/tree/master) was the best model on this training data. I also made a less overfit voting regressor combining each model in the hopes of creating a less over fit model that performs nearly as well on unseen data (RMSLE 0.1242) and worse on training data (which may be helpful!)
+This project is based on [a well known kaggle competition](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques) and focuses on predicting housing sale prices in Ames, Iowa using various regression techniques (XGBRegressor, GradientBoostingRegressor, RandomForestRegressor, and VotingRegressor). With a RMSLE of 0.1239 on unseen data the [Extreme Gradient Boosting Regressor](https://github.com/dmlc/xgboost/tree/master) was the best model. I standardized and streamlined the data cleaning and feature engineering and demonstrated increased performance caused by my feature engineering (without feature engineering: RMSLE 0.1247)
 
 
 ## Dataset
