@@ -3,12 +3,12 @@
 
 ## Overview
 
-This project is based on [a well known kaggle competition](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques) and focuses on predicting housing sale prices in Ames, Iowa using various regression techniques (XGBRegressor, GradientBoostingRegressor, RandomForestRegressor, and VotingRegressor). With a RMSLE of 0.1217 on unseen data the [Extreme Gradient Boosting Regressor](https://github.com/dmlc/xgboost/tree/master) was the best model on this training data. I also made a less overfit voting regressor combining each model in the hopes of creating a less over fit model that performs just as well on unseen data
+This project is based on [a well known kaggle competition](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques) and focuses on predicting housing sale prices in Ames, Iowa using various regression techniques (XGBRegressor, GradientBoostingRegressor, RandomForestRegressor, and VotingRegressor). With a RMSLE of 0.1217 on unseen data the [Extreme Gradient Boosting Regressor](https://github.com/dmlc/xgboost/tree/master) was the best model on this training data. I also made a less overfit voting regressor combining each model in the hopes of creating a less over fit model that performs nearly as well on unseen data (RMSLE 0.1242) and worse on training data (which may be helpful!)
 
 
 ## Dataset
 
-The dataset used in this project over 81 columns describing 2051 sales of residential properties in Ames, Iowa. The original dataset has been augmented through feature engineering, with additional features created or transformed to improve the predictive power of the models.
+The dataset used in this project over 81 columns describing 2051 sales of residential properties in Ames, Iowa. The original dataset has been augmented through feature engineering, with additional features created or transformed to improve the predictive power of the models. 
 
 **Features**:
 
@@ -82,3 +82,10 @@ The project is organized as follows:
 
 - `images/`: images created in jupyter notebook
 
+## Conclusion
+
+I attempted and succeeded in developing a method to clean and prepare data to be used for training models or making predictions. My feature engineering (quality multiplication) enhanced the performance of every model, including the voting regressor.
+
+The XGBoost (xgb) model demonstrated the best performance on the Kaggle dataset with a public score of 0.09626, while the voting regressor achieved a score of 0.09720. The data used for this analysis was collected for one city before, during, and after the housing collapse of 2008. Predicting house prices based solely on physical features is challenging, as various factors such as schools, neighbors, preferences, and negotiations also influence the sale price. In this project, the best reasonable outcome is accurate predictions the majority of the time. Calculating the error for each prediction reveals that the middle 50% of sales are within 5% of the actual sale price.
+
+**KAGGLE SUBMISSION:** Ranked in the top 2% of scores on the [House Prices: Advanced Regression Techniques Kaggle Leaderboard](https://www.kaggle.com/competitions/house-prices-advanced-regression-techniques/leaderboard) with a score of 0.09626, placing 89th out of 4219 as of Jan 16, 2024 (the voting regressor performed comparably but slightly worse at 0.0972).
