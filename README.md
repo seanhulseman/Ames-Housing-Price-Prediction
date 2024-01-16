@@ -8,7 +8,7 @@ This project is based on [a well known kaggle competition](https://www.kaggle.co
 
 ## Dataset
 
-The dataset used in this project over 81 columns describing 2051 sales of residential properties in Ames, Iowa. The original dataset has been augmented through feature engineering, with additional features created or transformed to improve the predictive power of the models. 
+The training dataset used in this project over 81 columns describing 2051 sales of residential properties in Ames, Iowa. Unlabeled test data is for submitting predictions to Kaggle
 
 **Features**:
 
